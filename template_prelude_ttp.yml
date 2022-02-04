@@ -1,0 +1,19 @@
+id: "${ttp_id}"
+metadata:
+  version: 1
+  authors:
+    - scythe-io
+  tags: []
+name: System processes
+description: |
+  "${chain_description}"
+#tactic: discovery
+technique:
+  id: T1057
+  #name: Process Discovery
+platforms:
+  windows:
+    #psh:
+      #command: Get-Process
+    cmd:
+      command: "${ttp_request}"
