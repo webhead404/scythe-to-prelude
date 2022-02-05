@@ -1,0 +1,12 @@
+bbb0f543-cbbd-47ff-9296-5ce6438055d2
+metadata:
+  version: 1
+  authors:
+    - scythe-io
+name: "FIN6_Phase1"
+description: |
+  "A SCYTHE Threat based off of the Center for Threat Informed Defense FIN6 Emulation YAML, and specifically, the Phase 1 behaviors. https://github.com/center-for-threat-informed-defense/adversary_emulation_library/tree/master/fin6"
+platforms:
+  windows:
+    cmd:
+      command: "cmd /c powershell -Command Expand-Archive  \".\\AdFind.zip\" -DestinationPath ."

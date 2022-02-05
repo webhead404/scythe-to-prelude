@@ -16,7 +16,7 @@ OPERATOR_TTP=$(uuidgen)
 # https://stackoverflow.com/questions/24628076/convert-multiline-string-to-array
 
 #IFS=$'\n'
-#for (( i=0; i<${#SPLIT_TTPS[@]}; i++ ));
+#for (( i=0; i<${#SCYTHE_TTP[@]}; i++ ));
 
 # Another example
 
@@ -34,9 +34,20 @@ OPERATOR_TTP=$(uuidgen)
 
 # Pulls all the correct key/values from JSON file and converts over to YAML.
 
-for LINE in "${SCYTHE_TTP}"
+#for LINE in "${SCYTHE_TTP}"
+
+#IFS=$'\n'
+#for (( i=0; i<${#SCYTHE_TTP[@]}; i++ ));
+IFS=$'\n'
+SPLIT_TTPS=($SCYTHE_TTP)
+
+#echo ${SCYTHE_TTP}
+
+for (( i=0; i<${#SPLIT_TTPS[@]}; i++ ))
 do
-    echo "
+    #echo "$i: ${SPLIT_TTPS[$i]}"
+
+    cat <<EOF >"${OPERATOR_TTP}.yml"
 ${OPERATOR_TTP}
 metadata:
   version: 1
@@ -48,6 +59,6 @@ description: |
 platforms:
   windows:
     cmd:
-      command: "${SCYTHE_TTP}"
-" > ${OPERATOR_TTP}.yml
-done
+      command: ${SPLIT_TTPS}
+EOF
+done < FIN6_Phase1_scythe_threat.json
