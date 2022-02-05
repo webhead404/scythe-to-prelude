@@ -25,7 +25,7 @@ for (( i=0; i<${#SPLIT_TTPS[@]}; i++ ))
 do
     #echo "$i: ${SPLIT_TTPS[$i]}"
 echo "
-${OPERATOR_TTP}
+id: ${OPERATOR_TTP}
 metadata:
   version: 1
   authors:
