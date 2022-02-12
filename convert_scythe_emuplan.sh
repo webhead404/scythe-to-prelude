@@ -8,7 +8,7 @@ SCYTHE_TTP_PAYLOAD=$(cat FIN6_Phase1_scythe_threat.json | jq --raw-output '.thre
 SCYTHE_TTP=$(cat FIN6_Phase1_scythe_threat.json | jq --raw-output '.threat.script[] | select(.module == "run") | .request')
 
 # Create some vars for Operator TTPS
-OPERATOR_TTP=$(uuidgen)
+#OPERATOR_TTP=$(uuidgen)
 
 
 
@@ -21,11 +21,16 @@ OPERATOR_TTP=$(uuidgen)
 IFS=$'\n'
 SPLIT_TTPS=($SCYTHE_TTP)
 
-for (( i=0; i<${#SPLIT_TTPS[@]}; i++ ))
+
+#if  [ -f "${OPERATOR_TTP}" ]; then
+#   unset ${OPERATOR_TTP};
+#fi
+
+for (( i=0; i<${#SPLIT_TTPS[@]}; i++))
 do
-    #echo "$i: ${SPLIT_TTPS[$i]}"
+OPERATOR_TTP=$(uuidgen)
 echo "
-${OPERATOR_TTP}
+id: ${OPERATOR_TTP}
 metadata:
   version: 1
   authors:
@@ -36,6 +41,5 @@ description: |
 platforms:
   windows:
     cmd:
-      command: ${SPLIT_TTPS}
-" 
-done | tee ${OPERATOR_TTP}.yml
+    command: ${SPLIT_TTPS[$i]}" > "${OPERATOR_TTP}.yml"
+done
