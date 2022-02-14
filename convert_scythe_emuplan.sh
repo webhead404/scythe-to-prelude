@@ -7,35 +7,32 @@ SCYTHE_THREAT_NAME=$(cat FIN6_Phase1_scythe_threat.json | jq --raw-output '.thre
 SCYTHE_TTP_PAYLOAD=$(cat FIN6_Phase1_scythe_threat.json | jq --raw-output '.threat.script[] | select(.module == "downloader") | .request')
 SCYTHE_TTP=$(cat FIN6_Phase1_scythe_threat.json | jq --raw-output '.threat.script[] | select(.module == "run") | .request')
 
-# Create some vars for Operator TTPS
-#OPERATOR_TTP=$(uuidgen)
-
-
 
 # Example code for converting multi line string to array. 
 # https://stackoverflow.com/questions/24628076/convert-multiline-string-to-array
 
 
-# This writes all 11 JSON objects to one YAML file. Want one file per JSON object.
-
+# Set delimeter for IFS to newline and define SCYTHE var as an array
 IFS=$'\n'
 SPLIT_TTPS=($SCYTHE_TTP)
 
 
-#if  [ -f "${OPERATOR_TTP}" ]; then
-#   unset ${OPERATOR_TTP};
-#fi
-
 for (( i=0; i<${#SPLIT_TTPS[@]}; i++))
 do
 OPERATOR_TTP=$(uuidgen)
+SCYTHE_TTP_COUNTER=$((SCYTHE_TTP_COUNTER+1))
+SCYTHE_TTP_NAME=${SCYTHE_THREAT_NAME}-${SCYTHE_TTP_COUNTER}
+#SCYTHE_TTP_NAME=$((SCYTHE_THREAT_NAME))
 echo "
 id: ${OPERATOR_TTP}
 metadata:
   version: 1
   authors:
     - scythe-io
-name: ${SCYTHE_THREAT_NAME}
+  tags: 
+    - ${SCYTHE_THREAT_NAME} 
+    - scythe-io
+name: ${SCYTHE_TTP_NAME}
 description: |
   ${SCYTHE_THREAT_DESCRIPTION}
 platforms:
@@ -43,3 +40,31 @@ platforms:
     cmd:
     command: ${SPLIT_TTPS[$i]}" > "${OPERATOR_TTP}.yml"
 done
+ 
+# Make sure to give the chain plan an ID as well so that it can be imported into Operator
+CHAIN_PLAN_ID=$(uuidgen)
+
+PLAN_TTP_COLLECTION=$(ls | egrep '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{8,12}' | cut -d "." -f1)
+
+PLAN_TTP_CONCAT="-"
+PLAN_TTP_FINISH="- "${PLAN_TTP_COLLECTION}
+
+echo "
+id: ${CHAIN_PLAN_ID}
+name: ${SCYTHE_THREAT_NAME}-Chain
+ttps: 
+  ${PLAN_TTP_FINISH}
+ordered: true
+summary: false
+platforms: []
+executors: []
+payloads: []
+metadata: {}
+variables: []
+reports: []" >> CHAIN_PLAN.yml
+
+mv CHAIN_PLAN.yml CHAIN_PLAN-${CHAIN_PLAN_ID}.yml
+
+
+
+echo "Conversion done! Make sure to move the TTP's into the correct folder!"
