@@ -23,10 +23,11 @@ OPERATOR_TTP=$(uuidgen)
 SCYTHE_TTP_COUNTER=$((SCYTHE_TTP_COUNTER+1))
 SCYTHE_TTP_NAME=${SCYTHE_THREAT_NAME}-${SCYTHE_TTP_COUNTER}
 #SCYTHE_TTP_NAME=$((SCYTHE_THREAT_NAME))
-echo "
-id: ${OPERATOR_TTP}
+
+echo "id: ${OPERATOR_TTP}
 metadata:
-  version: 1
+  chains:
+    - ${SCYTHE_THREAT_NAME}
   authors:
     - scythe-io
   tags: 
@@ -35,10 +36,11 @@ metadata:
 name: ${SCYTHE_TTP_NAME}
 description: |
   ${SCYTHE_THREAT_DESCRIPTION}
+tactic: discovery
 platforms:
   windows:
     cmd:
-    command: ${SPLIT_TTPS[$i]}" > "${OPERATOR_TTP}.yml"
+      command: ${SPLIT_TTPS[$i]}"> "${OPERATOR_TTP}.yml"
 done
  
 # Make sure to give the chain plan an ID as well so that it can be imported into Operator
@@ -49,19 +51,19 @@ PLAN_TTP_COLLECTION=$(ls | egrep '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{8,12}' |
 PLAN_TTP_CONCAT="-"
 PLAN_TTP_FINISH="- "${PLAN_TTP_COLLECTION}
 
-echo "
-id: ${CHAIN_PLAN_ID}
+
+echo "id: ${CHAIN_PLAN_ID}
 name: ${SCYTHE_THREAT_NAME}-Chain
 ttps: 
   ${PLAN_TTP_FINISH}
 ordered: true
 summary: false
 platforms: []
-executors: []
+executors: cmd
 payloads: []
 metadata: {}
 variables: []
-reports: []" >> CHAIN_PLAN.yml
+reports: []">> CHAIN_PLAN.yml
 
 mv CHAIN_PLAN.yml CHAIN_PLAN-${CHAIN_PLAN_ID}.yml
 
