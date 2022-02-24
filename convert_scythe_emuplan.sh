@@ -25,6 +25,8 @@ IFS=$'\n'
 
 SPLIT_SCYTHE_PAYLOAD=($SCYTHE_TTP_PAYLOAD)
 SPLIT_MITRE_TECH_ID_PAYLOAD=($SCYTHE_MITRE_TECHNIQUE_ID_PAYLOAD)
+
+function convert_payloads() {
 for ((i=0, j=0, i<${#SPLIT_SCYTHE_PAYLOAD[@]}; j<${#SPLIT_MITRE_TECH_ID_PAYLOAD[@]}; i++, j++))
 do
 
@@ -42,7 +44,6 @@ SPLIT_MITRE_TECH_NAME=($MITRE_ATTACK_TECHNIQUE_NAME)
 SPLIT_MITRE_TACTIC_NAME=($MITRE_ATTACK_TACTIC_NAME)
 SPLIT_SCYTHE_PAYLOAD_DEST=($SCYTHE_TTP_PAYLOAD_DEST)
 
-echo $SPLIT_SCYTHE_PAYLOAD_DEST[$m]
 
 echo "id: ${OPERATOR_TTP}
 metadata:
@@ -65,12 +66,13 @@ platforms:
     psh:
       command: IWR -Uri '${SPLIT_SCYTHE_PAYLOAD[$i]}' -OutFile ${SPLIT_SCYTHE_PAYLOAD_DEST[$i]}"> "${OPERATOR_TTP}.yml"
 done
-
-echo ${SPLIT_SCYTHE_PAYLOAD_DEST[$i]}
+}
 
 SPLIT_TTPS=($SCYTHE_TTP)
 SPLIT_MITRE_TECH_ID=($SCYTHE_MITRE_TECHNIQUE_ID)
 #SPLIT_SCYTHE_PAYLOAD=($SPLIT_SCYTHE_PAYLOAD)
+
+function convert_ttps() {
 for ((i=0, j=0, i<${#SPLIT_TTPS[@]}; j<${#SPLIT_MITRE_TECH_ID[@]}; i++, j++))
 
 do
@@ -112,8 +114,10 @@ platforms:
     cmd:
       command: ${SPLIT_TTPS[$i]}"> "${OPERATOR_TTP}.yml"
 done
+}
 
- 
+
+function create_chain() {
 # Make sure to give the chain plan an ID as well so that it can be imported into Operator
 CHAIN_PLAN_ID=$(uuidgen)
 
@@ -137,7 +141,13 @@ variables: []
 reports: []">> CHAIN_PLAN.yml
 
 mv CHAIN_PLAN.yml CHAIN_PLAN-${CHAIN_PLAN_ID}.yml
+}
 
+function main() {
+	convert_payloads
+	convert_ttps
+}
 
+main "$@"
 
 echo "Conversion done! Make sure to move the TTP's into the correct folder!"
