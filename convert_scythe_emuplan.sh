@@ -8,8 +8,6 @@ SCYTHE_THREAT_NAME=$(cat FIN6_Phase1_scythe_threat.json | jq --raw-output '.thre
 
 SCYTHE_TTP_PAYLOAD=$(cat FIN6_Phase1_scythe_threat.json | jq --raw-output '.threat.script[] | select(.module == "downloader") | .request' | cut -d " " -f2 | cut -d '"' -f2)
 
-#SCYTHE_TTP_PAYLOAD_DEST=$(cat FIN6_Phase1_scythe_threat.json | jq --raw-output '.threat.script[] | select(.module == "downloader") | .request' | cut -d '"' -f4)
-
 SCYTHE_TTP=$(cat FIN6_Phase1_scythe_threat.json | jq --raw-output '.threat.script[] | select(.module == "run") | .request')
 
 SCYTHE_MITRE_TECHNIQUE_ID=$(cat FIN6_Phase1_scythe_threat.json | jq --raw-output '.threat.script[] | select(.module == "run") | .rtags | .[]' | grep -E 'T[0-9]{4}.?|[0-9]{3}' | cut -d ":" -f2)
@@ -39,8 +37,6 @@ MITRE_ATTACK_TECHNIQUE_NAME=$(cat enterprise-attack.json | jq --raw-output --arg
 MITRE_ATTACK_TACTIC_NAME=$(cat enterprise-attack.json | jq --raw-output --arg technique_id ${SPLIT_MITRE_TECH_ID_PAYLOAD[$j]} '.objects[] | select(.type == "attack-pattern") | select(.external_references[0].external_id == $technique_id) | .kill_chain_phases[].phase_name')
 
 SCYTHE_TTP_PAYLOAD_DEST=$(cat FIN6_Phase1_scythe_threat.json | jq --raw-output '.threat.script[] | select(.module == "downloader") | .request' | cut -d '"' -f4)
-
-echo $SCYTHE_TTP_PAYLOAD_DEST
 
 SPLIT_MITRE_TECH_NAME=($MITRE_ATTACK_TECHNIQUE_NAME)
 SPLIT_MITRE_TACTIC_NAME=($MITRE_ATTACK_TACTIC_NAME)
